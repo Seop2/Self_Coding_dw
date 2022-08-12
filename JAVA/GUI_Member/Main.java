@@ -1,4 +1,4 @@
-package ÀÚ¹Ù27_À©µµ¿ìÇÁ·Î±×·¡¹Ö_member;
+package ìë°”27_ìœˆë„ìš°í”„ë¡œê·¸ë˜ë°_member;
 public class Main {
 	public static void main(String[] args) {
 		SubLogin v = new SubLogin();
