@@ -1,0 +1,178 @@
+package Round27_Examples;
+
+import java.sql.*;
+
+public class Round27_Ex10 {
+	private Connection dc;
+
+	public Round27_Ex10() {
+		try {
+			Class.forName("org.gjt.mm.mysql.Driver");
+		} catch (ClassNotFoundException ee) {
+			return;
+		}
+		String url = "jdbc:mysql://127.0.0.1:3306/dw202?"
+				+ "useUnicode=true&characterEncoding=utf8";	
+		String id = "root";
+		String pass = "1234";
+		try {
+			dc = DriverManager.getConnection(url, id, pass);
+		} catch (SQLException ee) {
+		}
+	}
+
+	// 회원가입을 위해서...
+	public boolean registerMember(String name, String id, String pass,
+			String hp) {
+		String query = "insert into member values (null, ?, ?, ?, ?)";
+		
+		try {
+			PreparedStatement pstmt = dc.prepareStatement(query);
+			pstmt.setString(1, id);
+			pstmt.setString(2, pass);
+			pstmt.setString(3, name);
+			pstmt.setString(4, hp);
+			
+			pstmt.executeUpdate();
+			pstmt.close();
+		} catch (SQLException ee) {
+			System.err.println("회원 가입 실패!! : " + ee.toString());
+			return false;
+		}
+		return true;
+	}
+
+	// login을 위해서...
+	public boolean loginMember(String id, String pass) {
+		String query = "select * from member where id = ? and pw = ?";
+		
+		try {
+			PreparedStatement pstmt = dc.prepareStatement(query);
+			pstmt.setString(1, id);
+			pstmt.setString(2, pass);
+			ResultSet rs = pstmt.executeQuery();
+			if (!rs.next()) {
+				rs.close();
+				pstmt.close();
+				return false;
+			}
+			rs.close();
+			pstmt.close();
+		} catch (SQLException ee) {
+			System.err.println("login 처리 실패!!");
+		}
+		return true;
+	}
+
+	// 회원 정보수정을 위해서...
+	public boolean editMember(String id, String name, String pass, String hp) {
+		String query = "update member set name = ?, pw = ?, hp = ? where id = ?";
+		
+		try {
+			PreparedStatement pstmt = dc.prepareStatement(query);
+			pstmt.setString(1, id);
+			pstmt.setString(2, name);
+			pstmt.setString(3, pass);
+			pstmt.setString(4, hp);
+			pstmt.executeUpdate();
+			pstmt.close();
+		} catch (SQLException ee) {
+			System.err.println("회원 정보수정 실패!!");
+			return false;
+		}
+		return true;
+	}
+
+	// 회원삭제를 위해서...
+	public boolean deleteMember(String id) {
+		String query = "delete from member where id = ?";
+		
+		try {
+			PreparedStatement pstmt = dc.prepareStatement(query);
+			pstmt.setString(1, id);
+			pstmt.executeUpdate();
+			pstmt.close();
+		} catch (SQLException ee) {
+			System.err.println("회원 삭제 실패!!");
+			return false;
+		}
+		return true;
+	}
+}
+============================================================================================================
+package Round27_Examples;
+
+import java.sql.*;
+import java.io.*;
+
+public class Round27_Ex11 {
+	public static void main(String[] args) throws IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		Round27_Ex10 dao = new Round27_Ex10();
+		while (true) {
+			System.out.print("1.회원가입  2.로그인  3.정보수정  4.정보삭제  5.종료 = ");
+			int x = System.in.read() - 48;
+			System.in.read();
+			System.in.read();
+			if (x == 1) {
+				System.out.println("회원가입 페이지 입니다.");
+				System.out.print("ID : ");
+				String id = in.readLine();
+				System.out.print("Password : ");
+				String pass = in.readLine();
+				System.out.print("이름 : ");
+				String name = in.readLine();
+				System.out.print("hp : ");
+				String hp = in.readLine();
+				boolean bool = dao.registerMember(name, id, pass, hp);
+				if (bool)
+					System.out.println("회원가입에 성공하였습니다~!");
+				else
+					System.out.println("회원가입에 실패하였습니다!!");
+				System.out.println();
+			} else if (x == 2) {
+				System.out.println("로그인 페이지 입니다.");
+				System.out.print("ID : ");
+				String id = in.readLine();
+				System.out.print("Password : ");
+				String pass = in.readLine();
+				boolean bool = dao.loginMember(id, pass);
+				if (bool)
+					System.out.println("로그인에 성공하였습니다~!");
+				else
+					System.out.println("로그인에 실패하였습니다");
+				System.out.println();
+			} else if (x == 3) {
+				System.out.println("정보수정 페이지 입니다.");
+				System.out.print("ID : ");
+				String id = in.readLine();
+				System.out.print("이름 : ");
+				String name = in.readLine();
+				System.out.print("Password : ");
+				String pass = in.readLine();
+				System.out.print("hp : ");
+				String hp = in.readLine();
+				boolean bool = dao.editMember(id, name, pass, hp);
+				if (bool)
+					System.out.println("회원정보를 수정하였습니다~!");
+				else
+					System.out.println("회원정보를 수정하지 못하였습니다!!");
+				System.out.println();
+			} else if (x == 4) {
+				System.out.println("정보삭제 페이지 입니다.");
+				System.out.print("ID : ");
+				String id = in.readLine();
+				boolean bool = dao.deleteMember(id);
+				if (bool)
+					System.out.println("회원정보가 삭제되었습니다~!");
+				else
+					System.out.println("회원정보를 삭제하지 못하였습니다!!");
+				System.out.println();
+			} else if (x == 5) {
+				System.exit(0);
+			} else {
+				System.err.println("잘못 입력!!");
+			}
+		}
+	}
+}
