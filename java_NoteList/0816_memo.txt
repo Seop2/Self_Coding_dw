@@ -1,0 +1,24 @@
+Map:select(join o)
+List: update, delete, insert
+-다중 행을 update, delete, insert
+단일 행을  update,delete,insert할 경우에는 List를 사용하지 않는다.
+
+String, Stringbuilder, StringBuffer
+String sql = "select * from a";
+Map or List = db요청하는 소스
+
+
+DB 접속하려면
+1. IP
+cmd->ipconfig
+192.168.0.56
+2. PORT (방)
+192.168.0.56:3306
+3. DATABASE 이름
+데이터베이스->테이블->데이터
+프로젝트->패키지->클래스
+
+ip가 두 종류있음
+1. private ip
+2. public ip
+115.94.162.198:3306
